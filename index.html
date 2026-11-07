@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Тарихшы - Қазақстан тарихы 8-сынып (§13)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#060a12',
+                            card: 'rgba(15, 23, 42, 0.88)',
+                            cyan: '#00f3ff',
+                            gold: '#ffd700',
+                            purple: '#c084fc',
+                            red: '#ff3366',
+                            green: '#00ff88',
+                            border: 'rgba(0, 243, 255, 0.3)'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        exo: ['Exo 2', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #040711;
+            color: #e2e8f0;
+            font-family: 'Exo 2', sans-serif;
+            overflow-x: hidden;
+        }
+        .neon-border-cyan {
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.25), inset 0 0 10px rgba(0, 243, 255, 0.15);
+            border: 1px solid rgba(0, 243, 255, 0.4);
+        }
+        .neon-border-gold {
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.25), inset 0 0 10px rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .cyber-btn {
+            transition: all 0.25s ease;
+            clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+        }
+        .cyber-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
+        }
+        .ai-glow {
+            animation: pulse-glow 2.5s infinite alternate;
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 12px rgba(0, 243, 255, 0.3); border-color: rgba(0, 243, 255, 0.4); }
+            100% { box-shadow: 0 0 28px rgba(0, 243, 255, 0.85); border-color: rgba(0, 243, 255, 0.9); }
+        }
+        .kazakh-pattern {
+            background-image: radial-gradient(rgba(0, 243, 255, 0.1) 1.2px, transparent 0);
+            background-size: 26px 26px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between kazakh-pattern relative select-none">
+
+    <!-- Particle Canvas -->
+    <canvas id="particleCanvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"></canvas>
+
+    <!-- Top Navigation Score Bar -->
+    <header class="relative z-10 border-b border-cyber-border bg-cyber-bg/90 backdrop-blur-md px-4 md:px-8 py-3 flex flex-wrap justify-between items-center gap-3">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyber-cyan flex items-center justify-center text-cyber-cyan text-xl neon-border-cyan">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <div>
+                <h1 class="font-orbitron font-black text-lg md:text-xl text-white tracking-wider flex items-center gap-2">
+                    ТАРИХИ ИНТЕЛЛЕКТ AI <span class="text-[10px] px-2 py-0.5 rounded bg-cyber-cyan/20 text-cyber-cyan border border-cyber-cyan">§13 ҚазАКСР</span>
+                </h1>
+                <p class="text-xs text-slate-400">Салтанат апайдың 8-сынып ашық сабағы</p>
+            </div>
+        </div>
+
+        <div id="topScoreBoard" class="flex items-center space-x-2 md:space-x-3">
+            <div id="cardTeam1" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs transition-all duration-300">
+                <span id="t1Label" class="font-bold text-cyber-cyan">1-топ:</span>
+                <span id="t1Score" class="font-orbitron font-extrabold text-white text-sm ml-1">0 б</span>
+            </div>
+            <div id="cardTeam2" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs transition-all duration-300">
+                <span id="t2Label" class="font-bold text-cyber-gold">2-топ:</span>
+                <span id="t2Score" class="font-orbitron font-extrabold text-white text-sm ml-1">0 б</span>
+            </div>
+            <div id="cardTeam3" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs transition-all duration-300">
+                <span id="t3Label" class="font-bold text-cyber-purple">3-топ:</span>
+                <span id="t3Score" class="font-orbitron font-extrabold text-white text-sm ml-1">0 б</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="relative z-10 flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
+
+        <!-- SCREEN 1: SETUP -->
+        <section id="setupScreen" class="glass-panel rounded-2xl p-6 md:p-10 neon-border-cyan text-center max-w-2xl mx-auto w-full">
+            <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyber-cyan mx-auto flex items-center justify-center text-cyber-cyan text-3xl mb-4 ai-glow">
+                <i class="fa-solid fa-users-gear"></i>
+            </div>
+            <h2 class="font-orbitron text-2xl md:text-3xl font-extrabold text-white mb-2">
+                ҮЙ ЖҰМЫСЫ
+            </h2>
+            <p class="text-slate-300 text-xs md:text-sm mb-6">
+                Тақырып: <b>§13. Қырғыз (Қазақ) Автономиялық Кеңестік Социалистік Республикасының құрылуы</b><br>
+                Оқушылар тізімі 3 топқа бөлінген. Ойынды бастау үшін топ аттарын енгізіңіз.
+            </p>
+
+            <div class="space-y-4 mb-8 text-left bg-black/50 p-5 rounded-xl border border-white/10">
+                <div>
+                    <label class="block text-xs font-orbitron text-cyber-cyan mb-1">1-ТОП:</label>
+                    <input type="text" id="team1Input" value="ЖЭС тобы" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-orbitron text-cyber-gold mb-1">2-ТОП:</label>
+                    <input type="text" id="team2Input" value="Әскери коммунизм саясаты тобы" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-orbitron text-cyber-purple mb-1">3-ТОП:</label>
+                    <input type="text" id="team3Input" value="Дала қазақтары тобы" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm">
+                </div>
+            </div>
+
+            <button onclick="startMainGame()" class="cyber-btn bg-gradient-to-r from-cyber-cyan via-blue-600 to-indigo-600 hover:opacity-90 text-black font-orbitron font-extrabold text-base px-8 py-3.5 rounded-lg neon-border-cyan w-full">
+                ОЙЫНДЫ БАСТАУ <i class="fa-solid fa-play ml-2"></i>
+            </button>
+        </section>
+
+        <!-- SCREEN 2: PHASE 1 - AI CALL STUDENT SCREEN -->
+        <section id="aiCallScreen" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6 items-start max-w-5xl mx-auto w-full">
+            <div class="lg:col-span-2 glass-panel p-6 md:p-10 rounded-2xl border border-cyber-cyan space-y-6 text-center">
+                <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyber-cyan mx-auto flex items-center justify-center text-cyber-cyan text-3xl ai-glow">
+                    <i class="fa-solid fa-bullhorn"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-orbitron text-cyber-cyan uppercase font-bold tracking-wider">1-ҚАДАМ: ОҚУШЫНЫ ТАҚТАҒА ШАҚЫРУ</span>
+                    <h3 class="text-2xl md:text-3xl font-extrabold text-white mt-1">Жасанды интеллект арқылы таңдау</h3>
+                </div>
+
+                <div class="bg-slate-900/90 border border-cyber-cyan/50 p-6 rounded-2xl ai-glow my-6">
+                    <p id="aiCallText" class="text-lg md:text-xl font-bold text-white italic">
+                        «Салтанат апай, оқушыны тақтаға шақыру үшін төмендегі батырманы басыңыз!»
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <button onclick="callStudentByAI()" class="cyber-btn bg-gradient-to-r from-amber-500 to-yellow-400 text-black font-orbitron font-extrabold text-lg px-8 py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 mx-auto w-full max-w-md">
+                        <i class="fa-solid fa-robot text-2xl"></i>
+                        <span>ОҚУШЫНЫ ТАҚТАҒА ШАҚЫРУ</span>
+                    </button>
+
+                    <div id="revealBoxesContainer" class="hidden pt-2">
+                        <button onclick="goToBoxesGrid()" class="cyber-btn bg-gradient-to-r from-green-500 to-emerald-600 text-black font-orbitron font-extrabold text-base px-8 py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 mx-auto w-full max-w-md animate-bounce">
+                            <i class="fa-solid fa-th text-xl"></i>
+                            <span>ҰЯШЫҚТАР ТАҚТАСЫНА ӨТУ</span> <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Expert Panel -->
+            <div class="lg:col-span-1 glass-panel p-6 rounded-2xl border border-cyber-cyan/60 space-y-5 relative overflow-hidden ai-glow">
+                <div class="flex items-center space-x-3 border-b border-white/10 pb-4">
+                    <div class="relative">
+                        <div class="w-14 h-14 rounded-full bg-cyan-500/20 border-2 border-cyber-cyan flex items-center justify-center text-cyber-cyan text-2xl">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <span class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-slate-900 rounded-full animate-ping"></span>
+                    </div>
+                    <div>
+                        <h4 class="font-orbitron font-bold text-white text-base">ЖИ САРАПШЫСЫ</h4>
+                        <span class="text-xs text-cyber-cyan font-orbitron">Бағалаушы</span>
+                    </div>
+                </div>
+
+                <div class="bg-black/80 p-5 rounded-xl border border-white/10 min-h-[180px] flex flex-col justify-between">
+                    <p class="text-sm font-semibold text-slate-100 leading-relaxed italic">
+                        «Алдымен кезекші оқушыны шақырып алыңыз, содан кейін 15 ұяшықтың бірін ашасыз.»
+                    </p>
+                    <div class="text-xs font-orbitron px-3 py-1.5 rounded text-center font-bold bg-cyan-500/10 text-cyber-cyan border border-cyber-cyan/30 mt-4">
+                        1-ҚАДАМ БЕЛСЕНДІ
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800 text-xs text-slate-400 space-y-1.5">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-300">Дұрыс жауап:</span>
+                        <span class="text-cyber-green font-bold font-orbitron">+5 балл</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-300">Қате жауап:</span>
+                        <span class="text-cyber-red font-bold font-orbitron">-2 балл</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: PHASE 2 - 15 BOXES GRID SCREEN -->
+        <section id="boxesGridScreen" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            <div class="lg:col-span-2 glass-panel p-6 md:p-8 rounded-2xl border border-cyber-gold space-y-6">
+                <div class="flex justify-between items-center border-b border-white/10 pb-4">
+                    <div>
+                        <span class="text-xs font-orbitron text-cyber-gold uppercase font-bold tracking-wider">2-ҚАДАМ: ҰЯШЫҚ ТАҢДАУ ТАҚТАСЫ</span>
+                        <h3 id="activeCalledStudentBadge" class="text-xl md:text-2xl font-extrabold text-white mt-1">Тақтадағы оқушы: күтілуде</h3>
+                    </div>
+                    <button onclick="backToCallScreen()" class="cyber-btn bg-slate-800 hover:bg-slate-700 text-cyber-cyan font-orbitron text-xs px-4 py-2 rounded-lg border border-cyber-cyan/40 flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Оқушыны шақыруға оралу
+                    </button>
+                </div>
+
+                <p class="text-xs text-slate-300">Шақырылған оқушы төмендегі 15 ұяшықтың бірін таңдайды:</p>
+
+                <!-- 15 Grid Buttons -->
+                <div id="hwGrid" class="grid grid-cols-3 sm:grid-cols-5 gap-3 pt-2"></div>
+
+                <!-- Finish & Video Navigation Bar -->
+                <div id="finishNavigationBanner" class="hidden flex justify-between items-center bg-yellow-500/10 p-4 rounded-xl border border-cyber-gold/50">
+                    <div class="text-cyber-gold font-orbitron font-bold text-xs md:text-sm">
+                        🎉 Барлық 15 ұяшыққа жауап берілді! Енді қорытынды бейне мен нәтижеге өте аласыз.
+                    </div>
+                    <button onclick="showFinalSummaryScreen()" class="cyber-btn bg-gradient-to-r from-cyber-gold to-amber-500 text-black font-orbitron font-extrabold px-5 py-2.5 rounded-lg text-xs flex items-center gap-2">
+                        <span>ҚОРЫТЫНДЫ БЕЙНЕ ЖӘНЕ НӘТИЖЕ</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Expert Panel -->
+            <div class="lg:col-span-1 glass-panel p-6 rounded-2xl border border-cyber-cyan/60 space-y-5 relative overflow-hidden ai-glow">
+                <div class="flex items-center space-x-3 border-b border-white/10 pb-4">
+                    <div class="relative">
+                        <div class="w-14 h-14 rounded-full bg-cyan-500/20 border-2 border-cyber-cyan flex items-center justify-center text-cyber-cyan text-2xl">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <span class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-slate-900 rounded-full animate-ping"></span>
+                    </div>
+                    <div>
+                        <h4 class="font-orbitron font-bold text-white text-base">ЖИ САРАПШЫСЫ</h4>
+                        <span class="text-xs text-cyber-cyan font-orbitron">Бағалаушы</span>
+                    </div>
+                </div>
+
+                <div class="bg-black/80 p-5 rounded-xl border border-white/10 min-h-[180px] flex flex-col justify-between">
+                    <p class="text-sm font-semibold text-slate-100 leading-relaxed italic">
+                        «Оқушы ұяшықтардың бірін басып, сұраққа жауап берсін!»
+                    </p>
+                    <div class="text-xs font-orbitron px-3 py-1.5 rounded text-center font-bold bg-yellow-500/10 text-cyber-gold border border-cyber-gold/30 mt-4">
+                        ҰЯШЫҚ ТАҢДАУ КЕЗЕҢІ
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800 text-xs text-slate-400 space-y-1.5">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-300">Дұрыс жауап:</span>
+                        <span class="text-cyber-green font-bold font-orbitron">+5 балл</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-300">Қате жауап:</span>
+                        <span class="text-cyber-red font-bold font-orbitron">-2 балл</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 4: QUESTION SCREEN -->
+        <section id="hwQuestionScreen" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            <div class="lg:col-span-2 glass-panel p-6 md:p-8 rounded-2xl border border-cyber-gold space-y-6">
+                <div class="flex justify-between items-center border-b border-white/10 pb-4">
+                    <span id="cleanHwNumLabel" class="text-sm font-orbitron font-extrabold text-cyber-gold px-3 py-1 rounded bg-yellow-500/10 border border-cyber-gold/40">
+                        ҰЯШЫҚ №
+                    </span>
+                    <span id="cleanHwStudentLabel" class="text-sm font-bold text-white bg-slate-800 px-3 py-1 rounded border border-slate-700"></span>
+                </div>
+
+                <div>
+                    <span class="text-xs font-orbitron text-cyber-cyan uppercase font-bold tracking-wider">ҰЯШЫҚ СҰРАҒЫ:</span>
+                    <h3 id="cleanHwQuestionText" class="text-xl md:text-2xl font-bold text-white leading-relaxed mt-2 min-h-[60px]"></h3>
+                </div>
+
+                <div id="cleanHwOptionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2"></div>
+
+                <div class="flex justify-between items-center border-t border-white/10 pt-4">
+                    <div class="text-xs text-slate-400">Жауап берілген соң тақтаға оралыңыз:</div>
+                    <button onclick="backToBoxesGrid()" class="cyber-btn bg-gradient-to-r from-cyber-cyan to-blue-600 text-black font-orbitron font-extrabold px-6 py-3 rounded-lg text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>ҰЯШЫҚТАР ТАҚТАСЫНА ОРАЛУ</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dedicated AI Expert Panel -->
+            <div class="lg:col-span-1 glass-panel p-6 rounded-2xl border border-cyber-cyan/60 space-y-5 relative overflow-hidden ai-glow">
+                <div class="flex items-center space-x-3 border-b border-white/10 pb-4">
+                    <div class="relative">
+                        <div class="w-14 h-14 rounded-full bg-cyan-500/20 border-2 border-cyber-cyan flex items-center justify-center text-cyber-cyan text-2xl">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <span class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-slate-900 rounded-full animate-ping"></span>
+                    </div>
+                    <div>
+                        <h4 class="font-orbitron font-bold text-white text-base">ЖАСАНДЫ ИНТЕЛЛЕКТ САРАПШЫСЫ</h4>
+                        <span class="text-xs text-cyber-cyan font-orbitron flex items-center gap-1">
+                            <i class="fa-solid fa-microchip animate-pulse"></i> Бағалаушы сарапшы
+                        </span>
+                    </div>
+                </div>
+
+                <div class="bg-black/80 p-5 rounded-xl border border-white/10 min-h-[220px] flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="text-xs font-orbitron text-slate-400 mb-2 flex items-center gap-1">
+                            <i class="fa-solid fa-comment-dots text-cyber-cyan"></i> ЖИ РЕАКЦИЯСЫ:
+                        </div>
+                        <p id="cleanAiSpeechBox" class="text-base font-semibold text-slate-100 leading-relaxed italic">
+                            «Тақтадағы оқушы сұрақты мұқият оқып, нұсқалардың бірін таңдасын!»
+                        </p>
+                    </div>
+
+                    <div id="cleanAiStatusTag" class="text-xs font-orbitron px-3 py-1.5 rounded text-center font-bold bg-cyan-500/10 text-cyber-cyan border border-cyber-cyan/30">
+                        СҰРАҚ КҮТІЛУДЕ...
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800 text-xs text-slate-400 space-y-1.5">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-300">Дұрыс жауап:</span>
+                        <span class="text-cyber-green font-bold font-orbitron bg-green-500/10 px-2 py-0.5 rounded border border-green-500/30">+5 балл қосылады</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-300">Қате жауап:</span>
+                        <span class="text-cyber-red font-bold font-orbitron bg-red-500/10 px-2 py-0.5 rounded border border-red-500/30">-2 балл шегеріледі</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 5: FINAL RESULTS & VIDEO PLAYER -->
+        <section id="finalScreen" class="hidden glass-panel rounded-2xl p-6 md:p-8 border border-cyber-gold/50 text-center max-w-4xl mx-auto space-y-6">
+            <div class="w-20 h-20 rounded-full bg-yellow-500/10 border-2 border-cyber-gold mx-auto flex items-center justify-center text-cyber-gold text-4xl neon-border-gold">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+
+            <div>
+                <span class="text-xs font-orbitron text-cyber-gold uppercase font-bold tracking-wider">БАРЛЫҚ ҰЯШЫҚТАРҒА ЖАУАП БЕРІЛДІ</span>
+                <h2 class="font-orbitron text-2xl md:text-3xl font-extrabold text-white mt-1">
+                    ҚОРЫТЫНДЫ НӘТИЖЕЛЕР ЖӘНЕ ТАРИХИ БЕЙНЕБАЯН
+                </h2>
+            </div>
+
+            <div id="finalScoresContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+
+            <div id="winnerBanner" class="p-4 rounded-xl bg-gradient-to-r from-yellow-500/20 via-amber-500/30 to-yellow-500/20 border border-cyber-gold text-cyber-gold font-orbitron font-bold text-lg">
+                🏆 ЖЕҢІМПАЗ АНЫҚТАЛУДА...
+            </div>
+
+            <!-- LOCAL HTML5 VIDEO PLAYER WITH CUSTOM TITLE -->
+            <div class="bg-black/80 p-4 rounded-xl border border-cyber-cyan/50 text-left space-y-3">
+                <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                    <div class="flex items-center space-x-2 text-cyber-cyan font-orbitron text-xs md:text-sm font-bold">
+                        <i class="fa-solid fa-film text-cyber-gold"></i>
+                        <span>БҮГІНГІ САБАҚТЫ ТҮСІНДІРУ (§13 БЕЙНЕБАЯН)</span>
+                    </div>
+                    <span class="text-[10px] bg-green-500/20 text-cyber-green px-2 py-0.5 rounded border border-green-500/40">
+                        Қосымша ақпарат
+                    </span>
+                </div>
+
+                <div class="relative w-full overflow-hidden rounded-lg border border-slate-700 aspect-video bg-slate-900 flex items-center justify-center">
+                    <video controls class="w-full h-full rounded-lg">
+                        <source src="https://raw.githubusercontent.com/h16536666-dotcom/unr.video.mp4/9bc51970e728b882f7645f8cfda7b7abac7b8a4b/video.mp4.webm" type="video/webm">
+                        Браузеріңіз бейнені ойнатуды қолдамайды.
+                    </video>
+                </div>
+            </div>
+
+            <button onclick="location.reload()" class="cyber-btn bg-gradient-to-r from-cyber-cyan to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-orbitron font-bold px-8 py-3.5 rounded-lg text-sm">
+                <i class="fa-solid fa-rotate-right mr-2"></i> ЖАҢА ОЙЫН БАСТАУ
+            </button>
+        </section>
+    </main>
+
+    <footer class="relative z-10 border-t border-cyber-border bg-cyber-bg/90 py-2.5 text-center text-xs text-slate-500">
+        Қазақстан тарихы 8-сынып (§13) | Интерактивті ашық сабақ веб-ойыны
+    </footer>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.setValueAtTime(146.83, now + 0.15);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.06);
+                osc.start(now);
+                osc.stop(now + 0.06);
+            }
+        }
+
+        // Ер адам дауысын таңдау (құрылғыда бар дауыстардан)
+        if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+
+        function pickMaleVoice() {
+            const voices = window.speechSynthesis.getVoices() || [];
+            const femaleHint = /female|woman|aigul|айгүл|svetlana|светлана|katya|екатерина|anna|alena|алёна|milena|irina|ирина|google русский|zira|елена/i;
+            const maleHint = /\bmale\b|man\b|daulet|даулет|dmitri|дмитрий|pavel|павел|yuri|юрий|maxim|максим|ivan|иван|aleksandr|александр/i;
+            const pick = (list) =>
+                list.find(v => maleHint.test(v.name) && !femaleHint.test(v.name)) ||
+                list.find(v => !femaleHint.test(v.name));
+            const kk = voices.filter(v => /^kk/i.test(v.lang));
+            return pick(kk) || null;
+        }
+
+        function speakAiMessage(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'kk-KZ';
+                const maleVoice = pickMaleVoice();
+                if (maleVoice) {
+                    utterance.voice = maleVoice;
+                    utterance.lang = maleVoice.lang;
+                }
+                utterance.rate = 0.95;
+                utterance.pitch = 0.6; // төмен дыбыс — ер адам дауысына жақын
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Дайын аудио (voices/ папкасы) бар болса соны ойнатады, болмаса браузер дауысына ауысады
+        const DEFAULT_TEAM_NAMES = ["ЖЭС тобы", "Әскери коммунизм саясаты тобы", "Дала қазақтары тобы"];
+        let currentAudio = null;
+
+        function teamNamesAreDefault() {
+            return teams.every((t, i) => t.name === DEFAULT_TEAM_NAMES[i]);
+        }
+
+        function playVoice(file, fallbackText) {
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+            if (!file || !teamNamesAreDefault()) { speakAiMessage(fallbackText); return; }
+            let fellBack = false;
+            const fallback = () => { if (!fellBack) { fellBack = true; speakAiMessage(fallbackText); } };
+            const audio = new Audio("voices/" + file + ".mp3");
+            currentAudio = audio;
+            audio.onerror = fallback;
+            const p = audio.play();
+            if (p && p.catch) p.catch(fallback);
+        }
+
+        const studentsList = [
+            { team: 1, name: "Алима" },
+            { team: 1, name: "Мақсат" },
+            { team: 1, name: "Айым" },
+            { team: 1, name: "Әб. Інжу" },
+            { team: 1, name: "Нұрлыхан" },
+            { team: 1, name: "Еркеназ" },
+            { team: 1, name: "Нұрасыл" },
+
+            { team: 2, name: "Айару" },
+            { team: 2, name: "Сезім" },
+            { team: 2, name: "Ерасыл" },
+            { team: 2, name: "Еркеназ" },
+            { team: 2, name: "Ақмедияр" },
+            { team: 2, name: "Қарақат" },
+            { team: 2, name: "Ас. Інжу" },
+
+            { team: 3, name: "Ақылжан" },
+            { team: 3, name: "Ақмырза" },
+            { team: 3, name: "Фархад" },
+            { team: 3, name: "Нұрмад" },
+            { team: 3, name: "Нұрай" },
+            { team: 3, name: "Нұрай" },
+            { team: 3, name: "Айым" },
+            { team: 3, name: "Ұлықбек" }
+        ];
+
+        let callingTeamTurn = 1;
+        let lastCalledStudent = "";
+        let lastCalledTeamIndex = 0;
+        let lastCalledName = "";
+        let openedBoxesCount = 0;
+
+        let teams = [
+            { id: 1, name: "ЖЭС тобы", score: 0 },
+            { id: 2, name: "Әскери коммунизм саясаты тобы", score: 0 },
+            { id: 3, name: "Дала қазақтары тобы", score: 0 }
+        ];
+
+        const hwQuestions = [
+            { num: 1, q: "Қырғыз (Қазақ) Автономиялы Кеңестік Социалистік Республикасын құру туралы декрет қашан қабылданды?", options: ["1920 жылы 26 тамызда", "1917 жылы 25 қазанда", "1922 жылы 30 желтоқсанда", "1925 жылы 15 сәуірде"], correct: 0 },
+            { num: 2, q: "Қазақ автономиясының алғашқы астанасы болып қай қала тағайындалды?", options: ["Орынбор", "Қызылорда", "Алматы", "Семей"], correct: 0 },
+            { num: 3, q: "1920 жылы қазан айында Орынборда өткен Қырғыз (Қазақ) АКСР Кеңестерінің Құрылтай съезінде Орталық Атқару Комитетінің (ОАК) төрағасы болып кім сайланды?", options: ["Сейітқали Мендешев", "Ахмет Байтұрсынов", "Сәкен Сейфуллин", "Тұрар Рысқұлов"], correct: 0 },
+            { num: 4, q: "Қырғыз (Қазақ) АКСР Халық Комиссарлары Кеңесінің (үкіметтің) алғашқы төрағасы болып кім тағайындалды?", options: ["Виктор Радус-Зенькович", "Сейітқали Мендешев", "Әліби Жангелдин", "Тұрар Рысқұлов"], correct: 0 },
+            { num: 5, q: "1920 жылы В.И. Лениннің қатысуымен өткен комиссия отырысында қазақ жерлерінің тұтастығын қорғап, Семей мен Ақмола облыстарын автономия құрамында қалдыруға қол жеткізген қайраткер?", options: ["Әлімхан Ермеков", "Әлихан Бөкейханов", "Міржақып Дулатов", "Ахмет Байтұрсынов"], correct: 0 },
+            { num: 6, q: "Қырғыз (Қазақ) АКСР-ін құру туралы декретке қол қойған Кеңес мемлекетінің басшылары:", options: ["В.И. Ленин мен М.И. Калинин", "И. Сталин мен Л. Троцкий", "М. Фрунзе мен В. Куйбышев", "Д. Цюрупа мен А. Рыков"], correct: 0 },
+            { num: 7, q: "1920 жылы 4 қазанда ашылған Қырғыз (Қазақ) АКСР Кеңестерінің I Құрылтай съезінде қабылданған маңызды құжат:", options: ["«Қырғыз (Қазақ) АКСР еңбекшілерінің құқықтары туралы декларация»", "«Алаш автономиясының ережесі»", "«Жер туралы декрет»", "«Қазақстан конституциясы»"], correct: 0 },
+            { num: 8, q: "Қазақ автономиясының астанасы Орынбор қаласынан қай жылы және қай қалаға көшірілді?", options: ["1925 жылы Ақмешітке (Қызылорда)", "1929 жылы Алматыға", "1924 жылы Ташкентке", "1927 жылы Семейге"], correct: 0 },
+            { num: 9, q: "1925 жылы сәуірде Қызылорда қаласында өткен Кеңестердің V съезінде тарихи әділдік қалпына келтіріліп, республика атауы қалай өзгертілді?", options: ["«Қазақ АКСР» болып түзетілді («Қырғыз» атауы «қазақ» болып өзгерді)", "«Қазақ Кеңес Социалистік Республикасы» аталды", "«Алаш Республикасы» болып жарияланды", "«Түркістан Республикасы» құрамына кірді"], correct: 0 },
+            { num: 10, q: "Қазақ автономиясы құрылғанға дейін қазақ халқының негізгі бөлігі әкімшілік тұрғыдан қай екі республика құрамында болып келді?", options: ["РКФСР және Түркістан АКСР", "Тек Сібір өлкесі мен Хиуа хандығы", "Бұхар әмірлігі мен Жетісу генерал-губернаторлығы", "Тек Қытай және Ресей империясы"], correct: 0 },
+            { num: 11, q: "Қазақ АКСР-інің құрылуының отарлық жүйені жою мен ұлттық мемлекеттілік құрудағы басты тарихи маңызы қандай?", options: ["Қазақ халқының өз алдына ұлттық мемлекеттік құрылымы мен аумақтық тұтастығының негізі қаланды", "Тек экономикалық орталық құрылды", "Әкімшілік басқару толығымен жойылды", "Мемлекеттік шекаралар өзгеріссіз қалды"], correct: 0 },
+            { num: 12, q: "Оқулықтағы зерттеу сұрағы: Қырғыз (Қазақ) Автономиялық Кеңестік Социалистік Республикасы құрылуының тарихи маңызы неде?", options: ["Қазақ жерлерін біріктіріп, әкімшілік, экономикалық және мәдени дамуға жол ашты", "Халықты басқа аймаққа көшіру үшін керек болды", "Тек әскери мақсатта құрылған болатын", "Ешқандай тарихи маңызы болған жоқ"], correct: 0 },
+            { num: 13, q: "1920 жылғы декретке сәйкес Қырғыз (Қазақ) АКСР-інің құрамына алғаш кірген әкімшілік бірліктер:", options: ["Семей, Ақмола, Торғай, Орал облыстары және Бөкей ордасы", "Жетісу және Сырдария облыстары", "Түркістан мен Ташкент уездері", "Маңғыстау мен Красноводск уездері"], correct: 0 },
+            { num: 14, q: "Қазақ автономиясының алғашқы астанасы ретінде Орынбор қаласының таңдалу себебі неде еді?", options: ["Ол ірі экономикалық, мәдени орталық және қазақ өлкесін басқаруға қолайлы көлік жолдарының түйіскен жері еді", "Қазақ зиялыларының қалауымен тек қала ішінен салынғандықтан", "Басқа қалаларда мүлде халық болмағандықтан", "Патша үкіметі бұрыннан бекіткендіктен"], correct: 0 },
+            { num: 15, q: "1924–1926 жылдары жүзеге асырылған ұлттық-территориялық межелеу нәтижесінде Қазақстанға қай аймақтар қайтарылды?", options: ["Жетісу және Сырдария облыстары, Қарақалпақстан аймағы", "Батыс Сібір мен Алтай аймағы толығымен", "Орал және Орынбор губерниялары ғана", "Каспий маңы өңірлері ғана"], correct: 0 }
+        ];
+
+        let cleanHwCorrectIndex = 0;
+        let cleanHwAnswered = false;
+        let activeQuestionIndex = 0;
+
+        function startMainGame() {
+            playSound('click');
+            teams[0].name = document.getElementById('team1Input').value.trim() || "ЖЭС тобы";
+            teams[1].name = document.getElementById('team2Input').value.trim() || "Әскери коммунизм саясаты тобы";
+            teams[2].name = document.getElementById('team3Input').value.trim() || "Дала қазақтары тобы";
+
+            document.getElementById('t1Label').innerText = teams[0].name + ":";
+            document.getElementById('t2Label').innerText = teams[1].name + ":";
+            document.getElementById('t3Label').innerText = teams[2].name + ":";
+
+            document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('aiCallScreen').classList.remove('hidden');
+        }
+
+        function kkAccusative(name) {
+            const w = name.trim().toLowerCase();
+            const last = w[w.length - 1];
+            let front = false;
+            for (let i = w.length - 1; i >= 0; i--) {
+                if ('әеіөү'.includes(w[i])) { front = true; break; }
+                if ('аоұыя'.includes(w[i])) { front = false; break; }
+            }
+            let c;
+            if ('аәеёиоөұүыіэюя'.includes(last)) c = 'н';
+            else if ('кқпстфхцчшщһ'.includes(last)) c = 'т';
+            else c = 'д';
+            return c + (front ? 'і' : 'ы');
+        }
+
+        function callStudentByAI() {
+            playSound('click');
+            const currentTeamStudents = studentsList.filter(s => s.team === callingTeamTurn);
+            const randomStudent = currentTeamStudents[Math.floor(Math.random() * currentTeamStudents.length)];
+            lastCalledTeamIndex = callingTeamTurn - 1;
+            
+            // Clean team name from any duplicate "тобы" or "топ" words
+            let rawName = teams[lastCalledTeamIndex].name.replace(/тобы/gi, '').replace(/топ/gi, '').trim();
+            let teamDisplayName = rawName + " тобы";
+            
+            lastCalledName = randomStudent.name;
+            lastCalledStudent = `${randomStudent.name} (${teamDisplayName})`;
+
+            const phrase = `Жақсы, Салтанат апай! Мен ${rawName} тобынан ${randomStudent.name}${kkAccusative(randomStudent.name)} тақтаға шақырамын!`;
+            const displayMessage = `«Жақсы, Салтанат апай! Мен ${rawName} тобынан ${randomStudent.name}${kkAccusative(randomStudent.name)} тақтаға шақырамын!»`;
+
+            document.getElementById('aiCallText').innerText = displayMessage;
+            const voiceIdx = studentsList.indexOf(randomStudent) + 1;
+            playVoice("s" + String(voiceIdx).padStart(2, "0"), phrase);
+
+            callingTeamTurn = (callingTeamTurn % 3) + 1;
+            document.getElementById('revealBoxesContainer').classList.remove('hidden');
+        }
+
+        function goToBoxesGrid() {
+            playSound('click');
+            document.getElementById('aiCallScreen').classList.add('hidden');
+            document.getElementById('boxesGridScreen').classList.remove('hidden');
+            document.getElementById('activeCalledStudentBadge').innerText = `Тақтадағы оқушы: ${lastCalledStudent}`;
+            renderHwGrid();
+        }
+
+        function backToCallScreen() {
+            playSound('click');
+            document.getElementById('boxesGridScreen').classList.add('hidden');
+            document.getElementById('aiCallScreen').classList.remove('hidden');
+        }
+
+        function renderHwGrid() {
+            const grid = document.getElementById('hwGrid');
+            grid.innerHTML = hwQuestions.map((q, idx) => `
+                <button id="hwBtn-${idx}" onclick="openCleanHwScreen(${idx})" class="cyber-btn ${q.done ? 'bg-slate-800 text-slate-500 border border-slate-800 opacity-50 line-through' : 'bg-slate-900 hover:bg-cyber-cyan/20 border border-slate-700 hover:border-cyber-cyan text-white'} p-4 rounded-xl flex flex-col items-center justify-center font-orbitron font-extrabold text-lg" ${q.done ? 'disabled' : ''}>
+                    <span class="text-xs text-cyber-cyan">ҰЯШЫҚ</span>
+                    <span>${q.num}</span>
+                </button>
+            `).join('');
+        }
+
+        function openCleanHwScreen(index) {
+            playSound('click');
+            activeQuestionIndex = index;
+            cleanHwAnswered = false;
+
+            document.getElementById('boxesGridScreen').classList.add('hidden');
+            document.getElementById('hwQuestionScreen').classList.remove('hidden');
+
+            const q = hwQuestions[index];
+            document.getElementById('cleanHwNumLabel').innerText = `ҰЯШЫҚ № ${q.num}`;
+            document.getElementById('cleanHwStudentLabel').innerText = lastCalledStudent ? `Тақтадағы оқушы: ${lastCalledStudent}` : "Оқушы таңдалмады";
+            document.getElementById('cleanHwQuestionText').innerText = q.q;
+
+            document.getElementById('cleanAiSpeechBox').innerText = lastCalledStudent ? `«${lastCalledName}, сұрақты мұқият оқып, нұсқалардың бірін таңдаңыз! Дұрыс жауапқа +5 балл беріледі, қате жауапқа -2 балл шегеріледі.»` : "«Сұрақты мұқият оқып, нұсқалардың бірін таңдаңыз!»";
+
+            let optionsWithOrigIndex = q.options.map((opt, i) => ({ text: opt, isCorrect: i === q.correct }));
+            for (let i = optionsWithOrigIndex.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsWithOrigIndex[i], optionsWithOrigIndex[j]] = [optionsWithOrigIndex[j], optionsWithOrigIndex[i]];
+            }
+
+            const letters = ['A', 'B', 'C', 'D'];
+            const optsGrid = document.getElementById('cleanHwOptionsGrid');
+            optsGrid.innerHTML = optionsWithOrigIndex.map((item, idx) => {
+                if (item.isCorrect) cleanHwCorrectIndex = idx;
+                return `
+                    <button onclick="handleCleanHwAnswer(${idx}, ${item.isCorrect})" class="clean-hw-opt-btn cyber-btn bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700 hover:border-cyber-cyan p-4 rounded-xl text-left text-base font-medium transition flex items-center space-x-3">
+                        <span class="w-8 h-8 rounded-lg bg-slate-800 text-cyber-cyan flex items-center justify-center font-orbitron font-bold text-sm shrink-0 border border-slate-700">${letters[idx]}</span>
+                        <span class="leading-tight">${item.text}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function handleCleanHwAnswer(selectedIndex, isCorrect) {
+            if (cleanHwAnswered) return;
+            cleanHwAnswered = true;
+
+            const answeringTeamIndex = lastCalledTeamIndex;
+            const buttons = document.querySelectorAll('.clean-hw-opt-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            hwQuestions[activeQuestionIndex].done = true;
+            openedBoxesCount++;
+
+            if (isCorrect) {
+                playSound('correct');
+                teams[answeringTeamIndex].score += 5;
+                buttons[selectedIndex].className = "clean-hw-opt-btn cyber-btn bg-green-950/80 text-green-200 border-2 border-cyber-green p-4 rounded-xl text-left text-base font-bold flex items-center space-x-3";
+                const msg = `Тамаша! ${teams[answeringTeamIndex].name} дұрыс жауап берді, +5 балл қосылды!`;
+                document.getElementById('cleanAiSpeechBox').innerText = `«${msg}»`;
+                playVoice("c" + (answeringTeamIndex + 1), msg);
+            } else {
+                playSound('wrong');
+                teams[answeringTeamIndex].score -= 2;
+                buttons[selectedIndex].className = "clean-hw-opt-btn cyber-btn bg-red-950/80 text-red-200 border-2 border-cyber-red p-4 rounded-xl text-left text-base font-medium flex items-center space-x-3";
+                buttons[cleanHwCorrectIndex].className = "clean-hw-opt-btn cyber-btn bg-green-950/60 text-green-300 border border-cyber-green/50 p-4 rounded-xl text-left text-base font-medium flex items-center space-x-3";
+                const msg = `Әттеген-ай, ${teams[answeringTeamIndex].name} қате жауап берді, -2 балл шегерілді.`;
+                document.getElementById('cleanAiSpeechBox').innerText = `«${msg} Дұрыс жауап жасыл түспен белгіленді.»`;
+                playVoice("w" + (answeringTeamIndex + 1), msg);
+            }
+
+            updateTopScoreBoard();
+        }
+
+        function updateTopScoreBoard() {
+            document.getElementById('t1Score').innerText = teams[0].score + " б";
+            document.getElementById('t2Score').innerText = teams[1].score + " б";
+            document.getElementById('t3Score').innerText = teams[2].score + " б";
+        }
+
+        function backToBoxesGrid() {
+            playSound('click');
+            document.getElementById('hwQuestionScreen').classList.add('hidden');
+            document.getElementById('boxesGridScreen').classList.remove('hidden');
+
+            renderHwGrid();
+
+            if (openedBoxesCount >= 15) {
+                document.getElementById('finishNavigationBanner').classList.remove('hidden');
+            }
+        }
+
+        function showFinalSummaryScreen() {
+            playSound('click');
+            document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('aiCallScreen').classList.add('hidden');
+            document.getElementById('boxesGridScreen').classList.add('hidden');
+            document.getElementById('hwQuestionScreen').classList.add('hidden');
+            document.getElementById('finalScreen').classList.remove('hidden');
+
+            const scoreContainer = document.getElementById('finalScoresContainer');
+            scoreContainer.innerHTML = teams.map((t, i) => `
+                <div class="bg-black/60 p-5 rounded-xl border ${i === 0 ? 'border-cyber-cyan' : (i === 1 ? 'border-cyber-gold' : 'border-cyber-purple')} text-center">
+                    <span class="text-xs font-orbitron text-slate-400">${t.name} НӘТИЖЕСІ:</span>
+                    <h4 class="font-orbitron font-black text-3xl ${i === 0 ? 'text-cyber-cyan' : (i === 1 ? 'text-cyber-gold' : 'text-cyber-purple')} mt-1">${t.score} БАЛЛ</h4>
+                </div>
+            `).join('');
+
+            const winnerBox = document.getElementById('winnerBanner');
+            const sortedTeams = [...teams].sort((a, b) => b.score - a.score);
+
+            if (sortedTeams[0].score > sortedTeams[1].score) {
+                winnerBox.innerHTML = `🏆 САЙЫС ЖЕҢІМПАЗЫ: <span class="text-white">${sortedTeams[0].name.toUpperCase()}</span> (${sortedTeams[0].score} балл)! ҚҰТТЫҚТАЙМЫЗ!`;
+            } else {
+                winnerBox.innerHTML = `🤝 ТАРТЫСТЫ САЙЫС! НӘТИЖЕ ТЕҢ БОЛДЫ!`;
+            }
+
+            playVoice("finish", "Барлық ұяшықтар ашылды! Жеңімпаздарды құттықтаймыз!");
+        }
+
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const particles = Array.from({ length: 40 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 2 + 1,
+            speedX: (Math.random() - 0.5) * 0.4,
+            speedY: (Math.random() - 0.5) * 0.4,
+            color: Math.random() > 0.5 ? 'rgba(0, 243, 255, 0.35)' : 'rgba(255, 215, 0, 0.35)'
+        }));
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += p.speedX; p.y += p.speedY;
+                if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        window.onload = function() { animateParticles(); };
+    </script>
+</body>
+</html>
